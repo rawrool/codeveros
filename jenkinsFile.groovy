@@ -43,6 +43,8 @@ node {
                     myImage.push()
                     myImage.push('dev')
                 }
+
+                build job: 'deploy', parameters: [string(name: 'env', value: 'dev'), string(name: 'tag', value: 'dev')]
             }
         }
 
@@ -53,6 +55,8 @@ node {
                     myImage.push()
                     myImage.push('latest')
                 }
+
+                build job: 'deploy', parameters: [string(name: 'env', value: 'prod'), string(name: 'tag', value: 'latest')]
             }
         }
     }
