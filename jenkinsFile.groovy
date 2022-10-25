@@ -32,5 +32,14 @@ node {
             }
         }
         */
+        stage('deliver') {
+            if(env.BRANCH_NAME == 'master') {
+                docker.withRegistry('', 'docker') {
+                    def myImage = docker.build("rawrool/ui:${env.BUILD_ID}")
+                    myImage.push()
+                    myImage.push('latest')
+                }
+            }
+        }
     }
 }
