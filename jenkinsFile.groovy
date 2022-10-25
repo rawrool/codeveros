@@ -1,3 +1,6 @@
+def servicePath = 'services/ui/angular'
+def imageRepo = 'rawrool/ui'
+
 node {
     stage('cleanUp') {
         cleanWs()
@@ -5,7 +8,7 @@ node {
 
     checkout scm
 
-    dir('services/ui/angular') {
+    dir(servicePath) {
 /*
         stage('dependencies') {
             docker.image('node:14.16').inside {
@@ -34,9 +37,19 @@ node {
         }
         */
         stage('deliver') {
+            if(env.BRANCH_NAME == 'develop') {
+                docker.withRegistry('', 'docker') {
+                    def myImage = docker.build("${imageRepo}:${env.BUILD_ID}")
+                    myImage.push()
+                    myImage.push('dev')
+                }
+            }
+        }
+
+        stage('promote') {
             if(env.BRANCH_NAME == 'master') {
                 docker.withRegistry('', 'docker') {
-                    def myImage = docker.build("rawrool/ui:${env.BUILD_ID}")
+                    def myImage = docker.image("${imageRepo}:dev")
                     myImage.push()
                     myImage.push('latest')
                 }
